@@ -5,6 +5,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 val build: DefaultTask by tasks
 val shadowJar: DefaultTask by tasks
+val springCloudVersion: String by project
 
 repositories {
     mavenCentral()
@@ -14,8 +15,20 @@ plugins {
     java
     application
     idea
+    id("org.springframework.boot")
+    id("io.spring.dependency-management")
     id("com.bmuschko.docker-remote-api")
     id("com.github.johnrengelman.shadow") version "5.1.0"
+}
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion")
+    }
+}
+
+dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-web")
 }
 
 application {
@@ -45,13 +58,13 @@ tasks.register<Copy>("copyJar") {
 val createDockerfile by tasks.creating(Dockerfile::class) {
     from("openjdk:11-slim")
     copyFile("test-pipeline-1.0-SNAPSHOT.jar", "test-pipeline.jar")
-    entryPoint("java","-jar","/test-pipeline.jar")
-    exposePort(8761)
+    entryPoint("java","-jar","test-pipeline.jar")
+    exposePort(8181)
 }
 
 val buildMyAppImage by tasks.creating(DockerBuildImage::class) {
     dependsOn(createDockerfile)
-    images.add("test-pipeline:latest")
+    images.add("test:latest")
 }
 
 val createMyAppContainer by tasks.creating(DockerCreateContainer::class) {

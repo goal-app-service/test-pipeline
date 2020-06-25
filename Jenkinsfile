@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+    environment {
+        BUILD_ID = ${env.BUILD_ID}
+    }
     stages {
         stage('Build') {
             steps {
@@ -24,7 +26,7 @@ pipeline {
             steps{
                 dir('build/docker'){
                     script{
-                        def appimage = docker.build("pokl/test-pipeline:${env.BUILD_ID}", "-f Dockerfile .")
+                        def appimage = docker.build("pokl/test-pipeline:${BUILD_ID}", "-f Dockerfile .")
                         docker.withRegistry( '', registryCredential ) {
                             appimage.push()
                             appimage.push('latest')
