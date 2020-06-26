@@ -14,6 +14,11 @@ public class TestApp {
         return "Greetings from Spring Boot!";
     }
 
+  @RequestMapping("/go")
+  public String index1() {
+    return "Greetings from Spring Boot!!!!!";
+  }
+
     public static void main(String[] args) {
       TestApp testApp = new TestApp();
       testApp.num1 = 10;
