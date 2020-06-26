@@ -18,4 +18,4 @@ spec:
         - name: test
           image: pokl/test:latest
           ports:
-          - containerPort: 9092
+          - containerPort: 8181
