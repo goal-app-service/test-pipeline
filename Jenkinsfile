@@ -41,6 +41,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
+                    sh '/usr/local/bin/kubectl delete -f k8s/'
                     sh '/usr/local/bin/kubectl apply -f k8s/'
                 }
             }
