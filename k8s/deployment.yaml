@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: test
-          image: pokl/test:${BUILD_ID}
+          image: pokl/test:latest
           ports:
           - containerPort: 9092
