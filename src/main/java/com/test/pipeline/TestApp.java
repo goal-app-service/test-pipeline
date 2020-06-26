@@ -11,7 +11,7 @@ public class TestApp {
 
     @RequestMapping("/")
     public String index() {
-        return "Greetings from Spring Boot!";
+        return "Greetings from Spring Boot12!";
     }
 
   @RequestMapping("/go")
