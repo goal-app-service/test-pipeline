@@ -16,18 +16,23 @@ pipeline {
                 sh './gradlew createDockerfile'
             }
         }
-        stage('Publish') {
-            environment {
-                registryCredential = 'dockerhub'
-            }
-            steps{
-                dir('build/docker'){
+        stage('Docker Build') {
+            steps {
+                dir('build/docker') {
                     script{
-                        def appimage = docker.build("test:latest", "-f Dockerfile .")
+                        sh 'docker build -t test .'
                         sh 'image tag test:latest pokl/test:latest'
-                        docker.withRegistry( '', registryCredential ) {
-                            appimage.push()
-                            appimage.push('latest')
+                    }
+                }
+            }
+        }
+        stage('Publish') {
+            steps {
+                dir('build/docker') {
+                    script{
+                        withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+                            sh 'docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}'
+                            sh 'docker push pokl/test:latest'
                         }
                     }
                 }
