@@ -21,7 +21,7 @@ pipeline {
                 dir('build/docker') {
                     script{
                         sh 'docker build -t test .'
-                        sh 'image tag test:latest pokl/test:latest'
+                        sh 'docker image tag test:latest pokl/test:latest'
                     }
                 }
             }
