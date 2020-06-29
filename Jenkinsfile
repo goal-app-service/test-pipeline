@@ -31,7 +31,7 @@ pipeline {
                 dir('build/docker') {
                     script{
                         withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
-                            sh 'docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}'
+                            sh 'docker login -u ${dockerHubUser} -p ${dockerHubPassword}'
                             sh 'docker push pokl/test:latest'
                         }
                     }
