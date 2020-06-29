@@ -16,23 +16,18 @@ pipeline {
                 sh './gradlew createDockerfile'
             }
         }
-        stage('Docker Build') {
-            steps {
-                dir('build/docker') {
-                    script{
-                        sh '/usr/local/bin/docker build -t test .'
-                        sh '/usr/local/bin/docker image tag test:latest pokl/test:latest'
-                    }
-                }
-            }
-        }
         stage('Publish') {
-            steps {
-                dir('build/docker') {
+            environment {
+                registryCredential = 'dockerhub'
+            }
+            steps{
+                dir('build/docker'){
                     script{
-                        withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
-                            sh "/usr/local/bin/docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
-                            sh '/usr/local/bin/docker push pokl/test:latest'
+                        def appimage = docker.build("test:latest", "-f Dockerfile .")
+                        sh 'image tag test:latest pokl/test:latest'
+                        docker.withRegistry( '', registryCredential ) {
+                            appimage.push()
+                            appimage.push('latest')
                         }
                     }
                 }
@@ -41,8 +36,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    sh '/usr/local/bin/kubectl delete -f k8s/'
-                    sh '/usr/local/bin/kubectl apply -f k8s/'
+                    sh 'kubectl delete -f k8s/'
+                    sh 'kubectl apply -f k8s/'
                 }
             }
         }
