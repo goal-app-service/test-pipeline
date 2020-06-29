@@ -1,4 +1,3 @@
 # test-pipeline
-test-pipeline test
-
+test-pipeline
 

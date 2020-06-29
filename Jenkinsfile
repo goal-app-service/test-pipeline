@@ -41,8 +41,10 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    sh 'kubectl delete -f k8s/'
-                    sh 'kubectl apply -f k8s/'
+                    withKubeConfig([credentialsId: 'service-account', serverUrl:"${KUBERNETES_URL}"]){
+                        sh 'kubectl delete -f k8s/'
+                        sh 'kubectl apply -f k8s/'
+                    }
                 }
             }
         }
