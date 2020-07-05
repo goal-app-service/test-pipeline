@@ -48,5 +48,12 @@ pipeline {
                 }
             }
         }
+        stage('Slack it'){
+            steps {
+                slackSend channel: '#goal-app',
+                          message: 'Pipeline is finished'
+                }
+            }
+        }
     }
 }
