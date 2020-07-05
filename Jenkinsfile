@@ -4,6 +4,10 @@ def COLOR_MAP = [
 ]
 
 pipeline {
+    environment {
+        // test variable: 0=success, 1=fail; must be string
+        doError = '0'
+    }
     agent any
     stages {
         stage('Build') {
@@ -47,7 +51,11 @@ pipeline {
             steps {
                 script {
                     withKubeConfig([credentialsId: 'service-account', serverUrl:"${KUBERNETES_URL}"]){
-                        sh 'kubectl delete -f k8s/'
+                        try {
+                            sh 'kubectl delete -f k8s/'
+                        } catch (e) {
+                            echo 'Error when executing kubectl ' + e
+                        }
                         sh 'kubectl apply -f k8s/'
                     }
                 }
